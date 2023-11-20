@@ -51,7 +51,7 @@ void loop() {
   // Move the mouse cursor
   Mouse.move(xMapped, yMapped);
 
-  //=======================rotary encoder as scroll wheel===================
+  //=======================Rotary encoder as scroll wheel===================
   static long oldPosition = -1;
   long newPosition = myEncoder.read();
   //clockwise
@@ -59,13 +59,14 @@ void loop() {
       Mouse.move(0, 0, 1);  // Scroll up
   //counterclockwise
   } else if (newPosition < oldPosition) {
-      Mouse.move(0, 0, -1);  // Scroll up
+      Mouse.move(0, 0, -1);  // Scroll down
   }
   //oldPosition = newPosition;
   if (newPosition != oldPosition) {
     Serial.println(newPosition);
     oldPosition = newPosition;
   }
+
   //=======================END delay=========================
   delay(10);  // Add a small delay to avoid rapid cursor movements
 }
