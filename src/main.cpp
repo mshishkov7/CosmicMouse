@@ -23,11 +23,15 @@ const int LEDLayerThree = 7;
 
 int layer = 3;  // Initial layer
 
-//Analog
+//joystick 
 const int joystickXPin = A0;  // Analog pin for X-axis
 const int joystickYPin = A1;  // Analog pin for Y-axis
-Encoder myEncoder(A2, A3); // DT connected to A2, CLK connected to A3
 int mouseSpeed = 1; // 1-10
+
+//rotary
+static boolean ROTARY_INVERTED = true; // Rotary motion direction inverted
+static int ROTARY_SPEED = 1; // Encoder clicks per step
+Encoder rotary(A2, A3); // DT connected to A2, CLK connected to A3
 
 // Variables to track the state of the encoder
 int lastCLKState; 
@@ -40,6 +44,7 @@ void setup() {
   pinMode(LEDLayerTwo, OUTPUT);
   pinMode(LEDLayerThree, OUTPUT);
   Serial.begin(9600);
+  Consumer.begin();
   Mouse.begin();
 }
 
@@ -50,14 +55,6 @@ void loop() {
     while (digitalRead(layerButton) == LOW) {}  // Wait for button release
     toggleLayer();
   }
-  // reset to layer one with 2 buttons at the same time (the rotary encoder and the joystick buttons)
-  //if (digitalRead(joystickButton) == LOW && digitalRead(layerButton) == LOW) {
-  //  delay(50);  // Debouncing delay
-  //  while (digitalRead(joystickButton) == LOW && digitalRead(layerButton) == LOW) {}  // Wait for button release
-  //  layer = 3;
-  //}
-  //======================call the layer functions based on the pressed button======================
-  //layerz code
   if (layer == 1){
     layerOne();
     digitalWrite(LEDLayerOne, HIGH); 
@@ -115,7 +112,7 @@ void layerOne(){
 
   //=======================Rotary encoder as scroll wheel===================
   static long oldPosition = -1;
-  long newPosition = myEncoder.read();
+  long newPosition = rotary.read();
   //clockwise
   if (newPosition > oldPosition) {
       Mouse.move(0, 0, 1);  // Scroll up
@@ -164,7 +161,7 @@ void layerTwo(){
 
   //=======================Rotary encoder as scroll wheel===================
   static long oldPosition = -1;
-  long newPosition = myEncoder.read();
+  long newPosition = rotary.read();
   //clockwise
   if (newPosition > oldPosition) {
       Mouse.move(0, 0, 1);  // Scroll up
@@ -179,7 +176,6 @@ void layerTwo(){
     Serial.println(newPosition);
     oldPosition = newPosition;
   }
-
   //=======================END delay=========================
   Serial.println("Layer Two is Active at the moment");
   delay(10);  // Add a small delay to avoid rapid cursor movements
@@ -196,7 +192,6 @@ void layerThree(){
     if (yValue >= 491 && yValue <= 495) {
       yValue = 493;
   }
-
   // Calibration adjustments for X-axis
   int xMapped = map(xValue, 510 - 50, 510 + 50, -mouseSpeed, mouseSpeed);  // Adjust the second and third parameters based on your preference
   // Calibration adjustments for Y-axis
@@ -205,27 +200,33 @@ void layerThree(){
   Mouse.move(xMapped, yMapped);
 
   //=======================Rotary encoder as scroll wheel===================
-  static long oldPosition = -1;
-  long newPosition = myEncoder.read();
-  //clockwise
-  if (newPosition > oldPosition) {
-      //Mouse.move(0, 0, 1);  // Scroll up
-      Keyboard.press(KEY_VOLUME_UP);
-      delay(100);
-      Keyboard.releaseAll();
-  //counterclockwise
-  } else if (newPosition < oldPosition) {
-      //Mouse.move(0, 0, -1);  // Scroll down
-      Keyboard.press(KEY_VOLUME_DOWN);
-      delay(100);
-      Keyboard.releaseAll();
+  if(abs(rotary.read()) >= 2*ROTARY_SPEED){
+    if(rotary.read() < 0) {
+      if(!ROTARY_INVERTED) {
+        Consumer.write(MEDIA_VOLUME_DOWN);
+        Consumer.write(MEDIA_VOLUME_DOWN);
+        delay(50);
+      }
+      else {
+        Consumer.write(MEDIA_VOLUME_UP);
+        Consumer.write(MEDIA_VOLUME_UP);
+        delay(50);
+      }
+    }
+    else {
+      if(!ROTARY_INVERTED) {
+        Consumer.write(MEDIA_VOLUME_UP);
+        Consumer.write(MEDIA_VOLUME_UP);
+        delay(50);
+      }
+      else {
+        Consumer.write(MEDIA_VOLUME_DOWN);
+        Consumer.write(MEDIA_VOLUME_DOWN);
+        delay(50);
+      }
+    }
+    rotary.write(0);
   }
-  //oldPosition = newPosition;
-  if (newPosition != oldPosition) {
-    Serial.println(newPosition);
-    oldPosition = newPosition;
-  }
-
   //=======================END delay=========================
   Serial.println("Layer Three is Active at the moment");
   delay(10);  // Add a small delay to avoid rapid cursor movements
