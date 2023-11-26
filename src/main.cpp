@@ -15,6 +15,8 @@ const int joystickButton = 14; //joystick button
 const int leftButton = 3; //left red minus button
 const int middleButton = 2; //middle green mute button
 const int rightButton = 4; //left yellow plus button
+#define DEBOUNCE_DELAY 50
+unsigned long lastDebounceTime = 0;
 
 //led - pin8 -> green middle | pin9 -> yellow right | pin7 -> red left
 const int LEDLayerOne = 8;
@@ -36,11 +38,14 @@ static int lastEncoderValue = 0;
 
 // Variables to track the state of the encoder
 int lastCLKState; 
-int currentCLKState;
+int currentCLKState; 
 
 void setup() {
   pinMode(layerButton, INPUT_PULLUP);
   pinMode(joystickButton, INPUT_PULLUP);
+  pinMode(leftButton, INPUT_PULLUP);
+  pinMode(middleButton, INPUT_PULLUP);
+  pinMode(rightButton, INPUT_PULLUP);
   pinMode(LEDLayerOne, OUTPUT);
   pinMode(LEDLayerTwo, OUTPUT);
   pinMode(LEDLayerThree, OUTPUT);
@@ -174,7 +179,7 @@ void layerTwo(){
   }
   //oldPosition = newPosition;
   if (newPosition != oldPosition) {
-    Serial.println(newPosition);
+    //Serial.println(newPosition);
     oldPosition = newPosition;
   }
   //=======================END delay=========================
@@ -224,6 +229,29 @@ if (abs(encoderValue) >= 2 * ROTARY_SPEED) {
   rotary.write(0);
 }
 lastEncoderValue = encoderValue;
+
+  //=======================Buttonz==========================
+  int leftButtonState = digitalRead(leftButton);
+  int middleButtonState = digitalRead(middleButton);
+  int RightButtonState = digitalRead(rightButton);
+
+  if (leftButtonState == LOW && (millis() - lastDebounceTime) > DEBOUNCE_DELAY) {
+    lastDebounceTime = millis();
+    while (digitalRead(leftButtonState) == LOW) {}
+    Consumer.write(MEDIA_PREV);
+  }
+
+  if (middleButtonState == LOW && (millis() - lastDebounceTime) > DEBOUNCE_DELAY) {
+    lastDebounceTime = millis();
+    while (digitalRead(middleButtonState) == LOW) {}
+    Consumer.write(MEDIA_PLAY_PAUSE);
+  }
+
+  if (RightButtonState == LOW && (millis() - lastDebounceTime) > DEBOUNCE_DELAY) {
+    lastDebounceTime = millis();
+    while (digitalRead(RightButtonState) == LOW) {}
+    Consumer.write(MEDIA_NEXT);
+  }
   //=======================END delay=========================
   //Serial.println("Layer Three is Active at the moment");
   delay(10);  // Add a small delay to avoid rapid cursor movements
