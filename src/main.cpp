@@ -9,9 +9,12 @@ void layerTwo();
 void layerThree();
 
 //buttonz
-const int layerButton = 2; //joystick button
-const int rotaryButton = 3; //rotary encoder button - used in combination with joystick(layerButton) button to reset to layer 1
-
+const int rotaryButton = 15; //rotary encoder button
+const int layerButton = rotaryButton;
+const int joystickButton = 14; //joystick button
+const int leftButton = 3; //left red minus button
+const int middleButton = 2; //middle green mute button
+const int rightButton = 4; //left yellow plus button
 
 //led - pin8 -> green middle | pin9 -> yellow right | pin7 -> red left
 const int LEDLayerOne = 8;
@@ -32,7 +35,7 @@ int currentCLKState;
 
 void setup() {
   pinMode(layerButton, INPUT_PULLUP);
-  pinMode(rotaryButton, INPUT_PULLUP);
+  pinMode(joystickButton, INPUT_PULLUP);
   pinMode(LEDLayerOne, OUTPUT);
   pinMode(LEDLayerTwo, OUTPUT);
   pinMode(LEDLayerThree, OUTPUT);
@@ -48,11 +51,11 @@ void loop() {
     toggleLayer();
   }
   // reset to layer one with 2 buttons at the same time (the rotary encoder and the joystick buttons)
-  if (digitalRead(rotaryButton) == LOW && digitalRead(layerButton) == LOW) {
-    delay(50);  // Debouncing delay
-    while (digitalRead(rotaryButton) == LOW && digitalRead(layerButton) == LOW) {}  // Wait for button release
-    layer = 3;
-  }
+  //if (digitalRead(joystickButton) == LOW && digitalRead(layerButton) == LOW) {
+  //  delay(50);  // Debouncing delay
+  //  while (digitalRead(joystickButton) == LOW && digitalRead(layerButton) == LOW) {}  // Wait for button release
+  //  layer = 3;
+  //}
   //======================call the layer functions based on the pressed button======================
   //layerz code
   if (layer == 1){
@@ -190,20 +193,6 @@ void layerThree(){
       yValue = 493;
   }
 
-  //=======================Press Button if x or y is moved
-  //if ((xValue < 508 || xValue > 512) || (yValue < 491 || yValue > 495)) {
-  //  // Press down Shift and Middle mouse button
-  //  Keyboard.press(KEY_LEFT_SHIFT);
-  //  Mouse.press(MOUSE_MIDDLE);
-  //  // Debugging statements
-  //  //Serial.println("Out of range - Pressing Shift and Middle Mouse Button");
-  //} else {
-  //  // Release Shift and Middle mouse button if within the specified range
-  //  Keyboard.releaseAll();
-  //  Mouse.release(MOUSE_MIDDLE);
-  //  // Debugging statements
-  //  //Serial.println("Within range - Releasing Shift and Middle Mouse Button");
-  //}
   // Calibration adjustments for X-axis
   int xMapped = map(xValue, 510 - 50, 510 + 50, -mouseSpeed, mouseSpeed);  // Adjust the second and third parameters based on your preference
   // Calibration adjustments for Y-axis
@@ -216,10 +205,16 @@ void layerThree(){
   long newPosition = myEncoder.read();
   //clockwise
   if (newPosition > oldPosition) {
-      Mouse.move(0, 0, 1);  // Scroll up
+      //Mouse.move(0, 0, 1);  // Scroll up
+      Keyboard.press(KEY_VOLUME_UP);
+      delay(100);
+      Keyboard.releaseAll();
   //counterclockwise
   } else if (newPosition < oldPosition) {
-      Mouse.move(0, 0, -1);  // Scroll down
+      //Mouse.move(0, 0, -1);  // Scroll down
+      Keyboard.press(KEY_VOLUME_DOWN);
+      delay(100);
+      Keyboard.releaseAll();
   }
   //oldPosition = newPosition;
   if (newPosition != oldPosition) {
