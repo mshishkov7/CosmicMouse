@@ -124,11 +124,11 @@ void layerOne(){
   }
   //oldPosition = newPosition;
   if (newPosition != oldPosition) {
-    Serial.println(newPosition);
+    //Serial.println(newPosition);
     oldPosition = newPosition;
   }
   //=======================END delay=========================
-  Serial.println("Layer One is Active at the moment");
+  //Serial.println("Layer One is Active at the moment");
   delay(10);  // Add a small delay to avoid rapid cursor movements
 }
 
@@ -173,11 +173,11 @@ void layerTwo(){
   }
   //oldPosition = newPosition;
   if (newPosition != oldPosition) {
-    Serial.println(newPosition);
+    //Serial.println(newPosition);
     oldPosition = newPosition;
   }
   //=======================END delay=========================
-  Serial.println("Layer Two is Active at the moment");
+  //Serial.println("Layer Two is Active at the moment");
   delay(10);  // Add a small delay to avoid rapid cursor movements
 }
 
@@ -228,6 +228,6 @@ void layerThree(){
     rotary.write(0);
   }
   //=======================END delay=========================
-  Serial.println("Layer Three is Active at the moment");
+  //Serial.println("Layer Three is Active at the moment");
   delay(10);  // Add a small delay to avoid rapid cursor movements
 }
