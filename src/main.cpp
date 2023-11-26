@@ -15,7 +15,7 @@ const int joystickButton = 14; //joystick button
 const int leftButton = 3; //left red minus button
 const int middleButton = 2; //middle green mute button
 const int rightButton = 4; //left yellow plus button
-#define DEBOUNCE_DELAY 50
+#define DEBOUNCE_DELAY 250
 unsigned long lastDebounceTime = 0;
 
 //led - pin8 -> green middle | pin9 -> yellow right | pin7 -> red left
@@ -133,6 +133,29 @@ void layerOne(){
     //Serial.println(newPosition);
     oldPosition = newPosition;
   }
+  
+  //=======================Buttonz==========================
+  int leftButtonState = digitalRead(leftButton);
+  int middleButtonState = digitalRead(middleButton);
+  int rightButtonState = digitalRead(rightButton);
+
+  if (leftButtonState == LOW && (millis() - lastDebounceTime) > DEBOUNCE_DELAY) {
+    lastDebounceTime = millis();
+    while (digitalRead(leftButtonState) == LOW) {}
+    Keyboard.write(KEY_F6);
+  }
+
+  if (middleButtonState == LOW && (millis() - lastDebounceTime) > DEBOUNCE_DELAY) {
+    lastDebounceTime = millis();
+    while (digitalRead(middleButtonState) == LOW) {}
+    Keyboard.write(MEDIA_PLAY_PAUSE);
+  }
+
+  if (rightButtonState == LOW && (millis() - lastDebounceTime) > DEBOUNCE_DELAY) {
+    lastDebounceTime = millis();
+    while (digitalRead(rightButtonState) == LOW) {}
+    Consumer.write(MEDIA_NEXT);
+  }
   //=======================END delay=========================
   //Serial.println("Layer One is Active at the moment");
   delay(10);  // Add a small delay to avoid rapid cursor movements
@@ -181,6 +204,29 @@ void layerTwo(){
   if (newPosition != oldPosition) {
     //Serial.println(newPosition);
     oldPosition = newPosition;
+  }
+
+  //=======================Buttonz==========================
+  int leftButtonState = digitalRead(leftButton);
+  int middleButtonState = digitalRead(middleButton);
+  int rightButtonState = digitalRead(rightButton);
+
+  if (leftButtonState == LOW && (millis() - lastDebounceTime) > DEBOUNCE_DELAY) {
+    lastDebounceTime = millis();
+    while (digitalRead(leftButtonState) == LOW) {}
+    Keyboard.write(KEY_F6);
+  }
+
+  if (middleButtonState == LOW && (millis() - lastDebounceTime) > DEBOUNCE_DELAY) {
+    lastDebounceTime = millis();
+    while (digitalRead(middleButtonState) == LOW) {}
+    Keyboard.write(MEDIA_PLAY_PAUSE);
+  }
+
+  if (rightButtonState == LOW && (millis() - lastDebounceTime) > DEBOUNCE_DELAY) {
+    lastDebounceTime = millis();
+    while (digitalRead(rightButtonState) == LOW) {}
+    Consumer.write(MEDIA_NEXT);
   }
   //=======================END delay=========================
   //Serial.println("Layer Two is Active at the moment");
@@ -233,7 +279,7 @@ lastEncoderValue = encoderValue;
   //=======================Buttonz==========================
   int leftButtonState = digitalRead(leftButton);
   int middleButtonState = digitalRead(middleButton);
-  int RightButtonState = digitalRead(rightButton);
+  int rightButtonState = digitalRead(rightButton);
 
   if (leftButtonState == LOW && (millis() - lastDebounceTime) > DEBOUNCE_DELAY) {
     lastDebounceTime = millis();
@@ -247,9 +293,9 @@ lastEncoderValue = encoderValue;
     Consumer.write(MEDIA_PLAY_PAUSE);
   }
 
-  if (RightButtonState == LOW && (millis() - lastDebounceTime) > DEBOUNCE_DELAY) {
+  if (rightButtonState == LOW && (millis() - lastDebounceTime) > DEBOUNCE_DELAY) {
     lastDebounceTime = millis();
-    while (digitalRead(RightButtonState) == LOW) {}
+    while (digitalRead(rightButtonState) == LOW) {}
     Consumer.write(MEDIA_NEXT);
   }
   //=======================END delay=========================
