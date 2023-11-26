@@ -119,9 +119,11 @@ void layerOne(){
   //clockwise
   if (newPosition > oldPosition) {
       Mouse.move(0, 0, 1);  // Scroll up
+      delay(100);
   //counterclockwise
   } else if (newPosition < oldPosition) {
       Mouse.move(0, 0, -1);  // Scroll down
+      delay(100);
   }
   //oldPosition = newPosition;
   if (newPosition != oldPosition) {
@@ -166,9 +168,11 @@ void layerTwo(){
   //clockwise
   if (newPosition > oldPosition) {
       Mouse.move(0, 0, 1);  // Scroll up
+      delay(100);
   //counterclockwise
   } else if (newPosition < oldPosition) {
       Mouse.move(0, 0, -1);  // Scroll down
+      delay(100);
   }
   //oldPosition = newPosition;
   if (newPosition != oldPosition) {
