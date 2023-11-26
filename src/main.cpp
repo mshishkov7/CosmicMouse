@@ -9,13 +9,14 @@ void layerTwo();
 void layerThree();
 
 //buttonz
-const int layerButton = 15; //joystick button
-const int rotaryButton = 14; //rotary encoder button - used in combination with joystick(layerButton) button to reset to layer 1
+const int layerButton = 2; //joystick button
+const int rotaryButton = 3; //rotary encoder button - used in combination with joystick(layerButton) button to reset to layer 1
 
-//led
-const int LEDLayerOne = 9;
-const int LEDLayerTwo = 7;
-//const int LEDLayerThree = 8;
+
+//led - pin8 -> green middle | pin9 -> yellow right | pin7 -> red left
+const int LEDLayerOne = 8;
+const int LEDLayerTwo = 9; 
+const int LEDLayerThree = 7; 
 
 int layer = 3;  // Initial layer
 
@@ -34,7 +35,7 @@ void setup() {
   pinMode(rotaryButton, INPUT_PULLUP);
   pinMode(LEDLayerOne, OUTPUT);
   pinMode(LEDLayerTwo, OUTPUT);
-  //pinMode(LEDLayerThree, OUTPUT);
+  pinMode(LEDLayerThree, OUTPUT);
   Serial.begin(9600);
   Mouse.begin();
 }
@@ -58,15 +59,15 @@ void loop() {
     layerOne();
     digitalWrite(LEDLayerOne, HIGH); 
     digitalWrite(LEDLayerTwo, LOW);
-    //digitalWrite(LEDLayerThree, LOW);
+    digitalWrite(LEDLayerThree, LOW);
   } else if (layer == 2){
     layerTwo();
     digitalWrite(LEDLayerTwo, HIGH);
     digitalWrite(LEDLayerOne, LOW);
-    //digitalWrite(LEDLayerThree, LOW);
+    digitalWrite(LEDLayerThree, LOW);
   } else if (layer == 3){
     layerThree();
-    //digitalWrite(LEDLayerThree, HIGH);
+    digitalWrite(LEDLayerThree, HIGH);
     digitalWrite(LEDLayerOne, LOW);
     digitalWrite(LEDLayerTwo, LOW);
   }
