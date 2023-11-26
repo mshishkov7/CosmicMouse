@@ -29,9 +29,10 @@ const int joystickYPin = A1;  // Analog pin for Y-axis
 int mouseSpeed = 1; // 1-10
 
 //rotary
-static boolean ROTARY_INVERTED = true; // Rotary motion direction inverted
+static boolean ROTARY_INVERTED = false; // Rotary motion direction inverted
 static int ROTARY_SPEED = 1; // Encoder clicks per step
 Encoder rotary(A2, A3); // DT connected to A2, CLK connected to A3
+static int lastEncoderValue = 0;
 
 // Variables to track the state of the encoder
 int lastCLKState; 
@@ -173,7 +174,7 @@ void layerTwo(){
   }
   //oldPosition = newPosition;
   if (newPosition != oldPosition) {
-    //Serial.println(newPosition);
+    Serial.println(newPosition);
     oldPosition = newPosition;
   }
   //=======================END delay=========================
@@ -200,33 +201,29 @@ void layerThree(){
   Mouse.move(xMapped, yMapped);
 
   //=======================Rotary encoder as scroll wheel===================
-  if(abs(rotary.read()) >= 2*ROTARY_SPEED){
-    if(rotary.read() < 0) {
-      if(!ROTARY_INVERTED) {
-        Consumer.write(MEDIA_VOLUME_DOWN);
-        Consumer.write(MEDIA_VOLUME_DOWN);
-        delay(50);
-      }
-      else {
-        Consumer.write(MEDIA_VOLUME_UP);
-        Consumer.write(MEDIA_VOLUME_UP);
-        delay(50);
-      }
+int encoderValue = rotary.read();
+delay(10);
+if (abs(encoderValue) >= 2 * ROTARY_SPEED) {
+  if (encoderValue < 0) {
+    if (!ROTARY_INVERTED) {
+      Consumer.write(MEDIA_VOLUME_DOWN);
+      Consumer.write(MEDIA_VOLUME_DOWN);
+    } else {
+      Consumer.write(MEDIA_VOLUME_UP);
+      Consumer.write(MEDIA_VOLUME_UP);
     }
-    else {
-      if(!ROTARY_INVERTED) {
-        Consumer.write(MEDIA_VOLUME_UP);
-        Consumer.write(MEDIA_VOLUME_UP);
-        delay(50);
-      }
-      else {
-        Consumer.write(MEDIA_VOLUME_DOWN);
-        Consumer.write(MEDIA_VOLUME_DOWN);
-        delay(50);
-      }
+  } else {
+    if (!ROTARY_INVERTED) {
+      Consumer.write(MEDIA_VOLUME_UP);
+      Consumer.write(MEDIA_VOLUME_UP);
+    } else {
+      Consumer.write(MEDIA_VOLUME_DOWN);
+      Consumer.write(MEDIA_VOLUME_DOWN);
     }
-    rotary.write(0);
   }
+  rotary.write(0);
+}
+lastEncoderValue = encoderValue;
   //=======================END delay=========================
   //Serial.println("Layer Three is Active at the moment");
   delay(10);  // Add a small delay to avoid rapid cursor movements
